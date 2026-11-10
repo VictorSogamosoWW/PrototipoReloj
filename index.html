@@ -11,142 +11,219 @@
 :root{
   --bg:#E9EEF3; --surface:#F7F9FB; --ink:#17212C; --muted:#5B6B7C; --rule:#CBD5DF;
   --steps:#2846C8; --steps-soft:#C9D3F5; --deep:#4B2C8F; --light:#9C86D6; --awake:#D8962B;
-  --ok:#1E8A5A; --err:#B23A3A;
-  color-scheme:light;
-  box-sizing:border-box;
+  --on-accent:#FFFFFF; --heart:#C2364B; --heart-soft:#F3CDD3; --oxy:#1C8C93; --ok:#1E8A5A; --err:#B23A3A;
+  color-scheme:light; box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --bg:#121A23; --surface:#1A2430; --ink:#E4EAF1; --muted:#8C9BAB; --rule:#2C3A49;
     --steps:#7D95FF; --steps-soft:#2A3768; --deep:#8F6FE0; --light:#C4B3F2; --awake:#E9AE4C;
-    --ok:#4CC08A; --err:#E07070; color-scheme:dark;
+    --heart:#F06C7F; --heart-soft:#4A2630; --oxy:#45C3CA; --ok:#4CC08A; --err:#E07070; --on-accent:#0E1530; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#121A23; --surface:#1A2430; --ink:#E4EAF1; --muted:#8C9BAB; --rule:#2C3A49;
   --steps:#7D95FF; --steps-soft:#2A3768; --deep:#8F6FE0; --light:#C4B3F2; --awake:#E9AE4C;
-  --ok:#4CC08A; --err:#E07070; color-scheme:dark;
+  --heart:#F06C7F; --heart-soft:#4A2630; --oxy:#45C3CA; --ok:#4CC08A; --err:#E07070; --on-accent:#0E1530; color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.45}
-main{max-width:560px;margin:0 auto;padding:20px 18px 48px}
-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
-h1{font-size:1.15rem;font-weight:700;margin:0}
-.status{font-size:.9rem;color:var(--muted);display:flex;align-items:center;gap:8px}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--rule)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:560px;margin:0 auto;padding:12px 18px}
+.who{display:flex;flex-direction:column;line-height:1.2}
+.who b{font-size:1.05rem}
+.status{font-size:.85rem;color:var(--muted);display:flex;align-items:center;gap:7px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--rule)}
 .dot.on{background:var(--ok)} .dot.busy{background:var(--awake)}
-.hero{margin:26px 0 6px}
-.hero .date{color:var(--muted);font-size:.95rem}
-.big{font-stretch:62%;font-weight:800;font-size:clamp(4.5rem,24vw,7.5rem);line-height:.9;letter-spacing:-.01em;
-  font-variant-numeric:tabular-nums;margin:6px 0 4px}
+#btnSync{background:var(--steps);color:var(--on-accent);padding:10px 16px;border-radius:999px;font-size:.95rem}
+main{max-width:560px;margin:0 auto;padding:4px 18px 110px}
+section.tab{display:none} section.tab.active{display:block}
+button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:12px 14px;cursor:pointer;background:var(--surface);color:var(--ink)}
+button:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--steps);outline-offset:2px}
+h2{font-size:1rem;font-weight:700;margin:28px 0 10px}
+.card{background:var(--surface);border-radius:14px;padding:14px}
+.meta{font-size:.88rem;color:var(--muted)}
+svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.78rem;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* Hoy */
+.hero{margin:14px 0 18px}
+.big{font-stretch:62%;font-weight:800;font-size:clamp(4.5rem,24vw,7.5rem);line-height:.9;letter-spacing:-.01em;font-variant-numeric:tabular-nums;margin:6px 0 4px}
 .big small{font-size:.24em;font-stretch:100%;font-weight:500;color:var(--muted);letter-spacing:0;margin-left:.3em}
 .goal{height:6px;background:var(--steps-soft);border-radius:3px;overflow:hidden;margin:10px 0 6px}
 .goal span{display:block;height:100%;background:var(--steps);width:0;transition:width .5s ease}
-.meta{font-size:.9rem;color:var(--muted)}
-.strip{margin:22px 0 4px;background:var(--surface);border-radius:14px;padding:14px 12px 8px}
-.strip svg,.week svg{display:block;width:100%;height:auto}
-.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted);margin:8px 2px 2px}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
-button{font:inherit;font-weight:600;border:0;border-radius:12px;padding:14px 12px;cursor:pointer;
-  background:var(--surface);color:var(--ink)}
-button.primary{grid-column:1/-1;background:var(--steps);color:#fff;font-size:1.05rem}
-button:disabled{opacity:.5;cursor:default}
-button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--steps);outline-offset:2px}
-h2{font-size:1rem;font-weight:700;margin:30px 0 10px}
-.week{background:var(--surface);border-radius:14px;padding:12px}
-.sleep-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+
+/* Salud */
+.vitals{display:grid;gap:10px}
+.vital{background:var(--surface);border-radius:14px;padding:14px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px}
+.vital h3{margin:0;font-size:.95rem;font-weight:600;color:var(--muted)}
+.vital .val{font-stretch:70%;font-weight:800;font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.vital .val small{font-size:.38em;font-stretch:100%;font-weight:500;color:var(--muted);margin-left:.25em}
+.vital .when{font-size:.8rem;color:var(--muted)}
+.vital button{grid-row:1/4;grid-column:2;min-width:96px}
+.vital[data-t="1"] .val{color:var(--heart)} .vital[data-t="2"] .val{color:var(--steps)} .vital[data-t="4"] .val{color:var(--oxy)}
+.vital.measuring{outline:2px solid var(--heart)}
+.vital.measuring .val{animation:beat 1s ease-in-out infinite}
+@keyframes beat{50%{opacity:.45}}
+.hist{list-style:none;margin:0;padding:0}
+.hist li{display:flex;justify-content:space-between;padding:9px 2px;border-bottom:1px solid var(--rule);font-size:.92rem;font-variant-numeric:tabular-nums}
+.hist li:last-child{border-bottom:0}
+.hist span{color:var(--muted)}
+
+/* Sueño */
+.sleep-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .sleep-sum div{background:var(--surface);border-radius:12px;padding:10px 12px}
 .sleep-sum b{display:block;font-size:1.3rem;font-stretch:80%;font-variant-numeric:tabular-nums}
 .sleep-sum span{font-size:.8rem;color:var(--muted)}
-.msg{font-size:.92rem;padding:12px 14px;border-radius:12px;background:var(--surface);margin:14px 0;display:none}
-.msg.show{display:block} .msg.err{color:var(--err)}
-details{margin-top:28px;background:var(--surface);border-radius:12px;padding:12px 14px}
-summary{cursor:pointer;font-weight:600}
-pre{font-size:.75rem;line-height:1.5;max-height:260px;overflow:auto;white-space:pre-wrap;word-break:break-all;color:var(--muted);margin:10px 0 0}
-.settings{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:12px}
+.night-big{font-stretch:62%;font-weight:800;font-size:clamp(3.6rem,18vw,5.5rem);line-height:.95;font-variant-numeric:tabular-nums;margin:14px 0 2px}
+
+/* Más */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feat{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.feat span{font-size:.8rem;padding:4px 9px;border-radius:999px;background:var(--bg)}
+.feat.no span{color:var(--muted);text-decoration:line-through}
+.settings{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .settings input{font:inherit;width:6.5em;padding:8px 10px;border-radius:10px;border:1px solid var(--rule);background:var(--bg);color:var(--ink)}
-.settings button{padding:9px 12px;font-size:.9rem}
-@media (prefers-reduced-motion:reduce){.goal span{transition:none}}
+details summary{cursor:pointer;font-weight:600}
+pre{font-size:.72rem;line-height:1.5;max-height:280px;overflow:auto;white-space:pre-wrap;word-break:break-all;color:var(--muted);margin:10px 0 0}
+
+.msg{font-size:.92rem;padding:12px 14px;border-radius:12px;background:var(--surface);margin:10px 0;display:none}
+.msg.show{display:block} .msg.err{color:var(--err)}
+
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--rule);
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+nav div{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav button{background:none;border-radius:0;padding:12px 4px 14px;font-size:.85rem;font-weight:600;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button svg{width:22px;height:22px}
+nav button[aria-current="page"]{color:var(--steps)}
+@media (prefers-reduced-motion:reduce){.goal span{transition:none}.vital.measuring .val{animation:none}}
 </style>
 </head>
 <body>
-<main>
-  <header>
-    <h1>Mi reloj</h1>
-    <div class="status"><span class="dot" id="dot"></span><span id="status">Sin conectar</span></div>
-  </header>
-
-  <section class="hero">
-    <div class="date" id="dayLabel">Hoy</div>
-    <div class="big" id="steps">0<small>pasos</small></div>
-    <div class="goal"><span id="goalBar"></span></div>
-    <div class="meta" id="goalText"></div>
-  </section>
-
-  <div class="strip">
-    <svg id="dayChart" viewBox="0 0 288 120" role="img" aria-label="Pasos por hora y sueño del día"></svg>
-    <div class="legend">
-      <span><i style="background:var(--steps)"></i>Pasos por hora</span>
-      <span><i style="background:var(--deep)"></i>Sueño profundo</span>
-      <span><i style="background:var(--light)"></i>Sueño ligero</span>
-      <span><i style="background:var(--awake)"></i>Despierto</span>
-    </div>
+<header>
+  <div class="who">
+    <b>Mi reloj</b>
+    <span class="status"><span class="dot" id="dot"></span><span id="status">Sin conectar</span></span>
   </div>
+  <button id="btnSync">Sincronizar</button>
+</header>
 
+<main>
   <div class="msg" id="msg"></div>
 
-  <div class="actions">
-    <button class="primary" id="btnSync">Conectar y sincronizar</button>
-    <button id="btnFind" disabled>Hacer vibrar</button>
-    <button id="btnCsv">Exportar CSV</button>
-  </div>
+  <section class="tab" id="hoy">
+    <div class="hero">
+      <div class="meta" id="dayLabel">Hoy</div>
+      <div class="big" id="steps">0<small>pasos</small></div>
+      <div class="goal"><span id="goalBar"></span></div>
+      <div class="meta" id="goalText"></div>
+    </div>
+    <div class="card">
+      <svg id="dayChart" viewBox="0 0 288 120" role="img" aria-label="Pasos por hora y sueño del día"></svg>
+      <div class="legend">
+        <span><i style="background:var(--steps)"></i>Pasos por hora</span>
+        <span><i style="background:var(--deep)"></i>Profundo</span>
+        <span><i style="background:var(--light)"></i>Ligero</span>
+        <span><i style="background:var(--awake)"></i>Despierto</span>
+      </div>
+    </div>
+    <h2>Últimos 14 días</h2>
+    <div class="card"><svg id="weekChart" viewBox="0 0 288 110" role="img" aria-label="Pasos de los últimos 14 días. Toca un día para verlo."></svg></div>
+  </section>
 
-  <h2>Últimos 14 días</h2>
-  <div class="week"><svg id="weekChart" viewBox="0 0 288 110" role="img" aria-label="Pasos de los últimos 14 días. Toca un día para verlo."></svg></div>
+  <section class="tab" id="salud">
+    <h2 style="margin-top:14px">Medir ahora</h2>
+    <div class="vitals">
+      <div class="vital" data-t="1"><h3>Pulso</h3><div class="val" id="v1">—<small>lpm</small></div><div class="when" id="w1">Sin mediciones</div><button data-measure="1">Medir</button></div>
+      <div class="vital" data-t="2"><h3>Presión arterial</h3><div class="val" id="v2">—<small>mmHg</small></div><div class="when" id="w2">Sin mediciones</div><button data-measure="2">Medir</button></div>
+      <div class="vital" data-t="4"><h3>Oxígeno en sangre</h3><div class="val" id="v4">—<small>%</small></div><div class="when" id="w4">Sin mediciones</div><button data-measure="4">Medir</button></div>
+    </div>
+    <p class="meta">Mantén el reloj ajustado y el brazo quieto durante la medición. Son lecturas orientativas del reloj, no sustituyen un equipo médico.</p>
+    <h2>Pulso reciente</h2>
+    <div class="card"><svg id="hrChart" viewBox="0 0 288 90" role="img" aria-label="Últimas mediciones de pulso"></svg></div>
+    <h2>Historial de mediciones</h2>
+    <div class="card"><ul class="hist" id="measList"></ul></div>
+  </section>
 
-  <h2>Sueño de la noche</h2>
-  <div class="sleep-sum">
-    <div><b id="sTotal">—</b><span>Dormido</span></div>
-    <div><b id="sDeep">—</b><span>Profundo</span></div>
-    <div><b id="sAwake">—</b><span>Despierto</span></div>
-  </div>
-  <div class="meta" id="sRange" style="margin-top:8px"></div>
+  <section class="tab" id="sueno">
+    <div class="meta" id="nightLabel" style="margin-top:14px">Anoche</div>
+    <div class="night-big" id="nightTotal">—</div>
+    <div class="meta" id="nightRange"></div>
+    <div class="sleep-sum">
+      <div><b id="sDeep">—</b><span>Profundo</span></div>
+      <div><b id="sLight">—</b><span>Ligero</span></div>
+      <div><b id="sAwake">—</b><span>Despierto</span></div>
+    </div>
+    <h2>Etapas de la noche</h2>
+    <div class="card">
+      <svg id="hypno" viewBox="0 0 288 86" role="img" aria-label="Etapas del sueño a lo largo de la noche"></svg>
+    </div>
+    <h2>Últimas 7 noches</h2>
+    <div class="card"><svg id="nightsChart" viewBox="0 0 288 110" role="img" aria-label="Horas dormidas las últimas 7 noches. Toca una noche para verla."></svg></div>
+    <p class="meta" id="watchSleep"></p>
+  </section>
 
-  <details>
-    <summary>Ajustes y registro técnico</summary>
-    <div class="settings">
-      <label for="goalInput">Meta diaria</label>
+  <section class="tab" id="mas">
+    <h2 style="margin-top:14px">Reloj</h2>
+    <div class="card">
+      <div id="devInfo" class="meta">Aún no se ha leído el reloj.</div>
+      <div class="feat" id="featYes"></div>
+      <div class="feat no" id="featNo"></div>
+    </div>
+    <div class="grid2" style="margin-top:10px">
+      <button id="btnFind">Hacer vibrar</button>
+      <button id="btnCsv">Exportar CSV</button>
+    </div>
+    <h2>Ajustes</h2>
+    <div class="card settings">
+      <label for="goalInput">Meta diaria de pasos</label>
       <input id="goalInput" type="number" min="500" step="500" inputmode="numeric">
       <button id="btnGoal">Guardar meta</button>
       <button id="btnClear">Borrar datos guardados</button>
     </div>
-    <div class="meta" id="devInfo" style="margin-top:10px"></div>
-    <pre id="log"></pre>
-  </details>
+    <h2>Registro técnico</h2>
+    <details class="card"><summary>Tramas enviadas y recibidas</summary><pre id="log"></pre></details>
+  </section>
 </main>
 
-<script>
-/* ===== Protocolo Lefun (ZK41 / eWatch) ===== */
-const SVC = 0x18d0, CH_NOTIFY = 0x2d00, CH_WRITE = 0x2d01;
-const CMD = { FIRMWARE:0x00, BATTERY:0x03, TIME:0x04, FIND:0x09, STEPS:0x12, ACTIVITY:0x13, SLEEP:0x15 };
+<nav aria-label="Secciones"><div>
+  <button data-tab="hoy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Hoy</button>
+  <button data-tab="salud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Salud</button>
+  <button data-tab="sueno"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>Sueño</button>
+  <button data-tab="mas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>Más</button>
+</div></nav>
 
-function crc8(bytes){ // CRC-8/MAXIM, verificado con tramas reales del reloj
-  let c = 0;
+<script>
+/* ===== Protocolo Lefun / TJD (ZK41) — comandos según el SDK de la app oficial ===== */
+const SVC = 0x18d0, CH_NOTIFY = 0x2d00, CH_WRITE = 0x2d01;
+const CMD = { INFO:0x00, BATTERY:0x03, TIME:0x04, FIND:0x09, MEASURE:0x0f, RESULT:0x10, MEAS_HIST:0x11,
+              STEPS:0x12, ACTIVITY:0x13, SLEEP_TOTAL:0x14, SLEEP:0x15, OTHER_FUNC:0x51 };
+const MT = { 1:{name:'Pulso', unit:'lpm', key:'hr'}, 2:{name:'Presión', unit:'mmHg', key:'bp'}, 4:{name:'Oxígeno', unit:'%', key:'spo2'} };
+
+function crc8(bytes){ let c = 0;
   for (const b of bytes){ c ^= b; for (let i=0;i<8;i++) c = (c & 1) ? (c >>> 1) ^ 0x8c : c >>> 1; }
-  return c;
-}
-function buildFrame(cmd, params=[]){
-  const body = [0xab, 4 + params.length, cmd, ...params];
-  return new Uint8Array([...body, crc8(body)]);
-}
+  return c; }
+function buildFrame(cmd, params=[]){ const body = [0xab, 4 + params.length, cmd, ...params]; return new Uint8Array([...body, crc8(body)]); }
 const hex = a => Array.from(a, b => b.toString(16).padStart(2,'0')).join('').toUpperCase();
 const u16 = (p,i) => (p[i] << 8) | p[i+1];
 const u32 = (p,i) => ((p[i] << 24) >>> 0) + (p[i+1] << 16) + (p[i+2] << 8) + p[i+3];
 const pad = n => String(n).padStart(2,'0');
+const dt = (y,m,d,h,mi) => `20${pad(y)}-${pad(m)}-${pad(d)}T${pad(h)}:${pad(mi)}`;
+const keyOf = t => `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+const todayKey = () => keyOf(new Date());
+
+function plausible(type, v){
+  if (type === 1) return v[0] >= 30 && v[0] <= 220;
+  if (type === 2) return v[0] >= 70 && v[0] <= 220 && v[1] >= 40 && v[1] <= 140;
+  if (type === 4) return v[0] >= 70 && v[0] <= 100;
+  return false;
+}
 
 /* ===== Almacenamiento ===== */
 const KEY = 'ewatch-zk41-v1';
@@ -154,31 +231,31 @@ let mem = null;
 function load(){
   if (mem) return mem;
   try { mem = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e){ mem = null; }
-  if (!mem) mem = { blocks:{}, days:{}, sleep:{}, goal:6000, lastSync:null, model:'' };
+  if (!mem) mem = {};
+  mem.blocks ??= {}; mem.days ??= {}; mem.sleep ??= {}; mem.meas ??= {}; mem.sleepTotal ??= {};
+  mem.goal ??= 6000;
   return mem;
 }
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch(e){} }
 
 /* ===== BLE ===== */
-let device = null, chWrite = null, chNotify = null, rxBuf = [], waiters = [], busy = false;
+let device = null, chWrite = null, rxBuf = [], waiters = [], busy = false, measuring = null;
 const $ = id => document.getElementById(id);
 
 function log(dir, bytes){
   const t = new Date().toLocaleTimeString('es-CO',{hour12:false});
   const el = $('log');
-  el.textContent = `${t} ${dir} ${hex(bytes)}\n` + el.textContent.split('\n').slice(0,200).join('\n');
+  el.textContent = `${t} ${dir} ${hex(bytes)}\n` + el.textContent.split('\n').slice(0,300).join('\n');
 }
-function setStatus(text, state){
-  $('status').textContent = text;
-  $('dot').className = 'dot' + (state ? ' ' + state : '');
-}
+function setStatus(text, state){ $('status').textContent = text; $('dot').className = 'dot' + (state ? ' ' + state : ''); }
+let msgTimer;
 function showMsg(text, isErr){
   const m = $('msg'); m.textContent = text; m.className = 'msg show' + (isErr ? ' err' : '');
+  clearTimeout(msgTimer); if (!isErr) msgTimer = setTimeout(() => m.className = 'msg', 7000);
 }
 
 function onNotify(ev){
-  const v = new Uint8Array(ev.target.value.buffer);
-  rxBuf.push(...v);
+  rxBuf.push(...new Uint8Array(ev.target.value.buffer));
   while (rxBuf.length >= 2){
     if (rxBuf[0] !== 0x5a){ rxBuf.shift(); continue; }
     const len = rxBuf[1];
@@ -189,162 +266,170 @@ function onNotify(ev){
     if (crc8(fr.slice(0,-1)) !== fr[len-1]) continue;
     const cmd = fr[2], p = fr.slice(3, -1);
     const w = waiters.find(x => x.cmd === cmd);
-    if (!w) continue;
-    w.frames.push(p);
-    if (w.isDone(p)) finishWaiter(w);
+    if (w){ w.frames.push(p); if (w.isDone(p)) finishWaiter(w); }
+    else onUnsolicited(cmd, p);
   }
 }
-function finishWaiter(w){
-  clearTimeout(w.timer);
-  waiters = waiters.filter(x => x !== w);
-  w.resolve(w.frames);
+function finishWaiter(w){ clearTimeout(w.timer); waiters = waiters.filter(x => x !== w); w.resolve(w.frames); }
+async function send(cmd, params=[]){
+  const frame = buildFrame(cmd, params); log('TX', frame);
+  if (chWrite.properties.writeWithoutResponse && chWrite.writeValueWithoutResponse) await chWrite.writeValueWithoutResponse(frame);
+  else await chWrite.writeValue(frame);
 }
 async function request(cmd, params=[], isDone=()=>true, timeout=2500){
-  const frame = buildFrame(cmd, params);
   const p = new Promise(resolve => {
     const w = { cmd, isDone, frames:[], resolve };
     w.timer = setTimeout(() => finishWaiter(w), timeout);
     waiters.push(w);
   });
-  log('TX', frame);
-  if (chWrite.writeValueWithoutResponse && chWrite.properties.writeWithoutResponse)
-    await chWrite.writeValueWithoutResponse(frame);
-  else await chWrite.writeValue(frame);
+  await send(cmd, params);
   return p;
 }
 
 async function connect(){
-  if (!navigator.bluetooth){
-    throw new Error('Este navegador no tiene Web Bluetooth. Abre la página en Chrome para Android, servida por HTTPS.');
-  }
+  if (!navigator.bluetooth) throw new Error('Este navegador no tiene Web Bluetooth. Abre la página en Chrome para Android, servida por HTTPS.');
   if (!device){
-    device = await navigator.bluetooth.requestDevice({
-      filters:[{ namePrefix:'eWatch' }, { services:[SVC] }],
-      optionalServices:[SVC]
-    });
+    device = await navigator.bluetooth.requestDevice({ filters:[{ namePrefix:'eWatch' }, { services:[SVC] }], optionalServices:[SVC] });
     device.addEventListener('gattserverdisconnected', () => {
-      chWrite = chNotify = null; setStatus('Desconectado'); $('btnFind').disabled = true;
+      chWrite = null; setStatus('Desconectado');
+      if (measuring) endMeasure(false, 'Se perdió la conexión con el reloj.');
     });
   }
   if (!device.gatt.connected || !chWrite){
     setStatus('Conectando…','busy');
-    const server = await device.gatt.connect();
-    const svc = await server.getPrimaryService(SVC);
-    chNotify = await svc.getCharacteristic(CH_NOTIFY);
+    const svc = await (await device.gatt.connect()).getPrimaryService(SVC);
+    const chNotify = await svc.getCharacteristic(CH_NOTIFY);
     chWrite = await svc.getCharacteristic(CH_WRITE);
     await chNotify.startNotifications();
     chNotify.addEventListener('characteristicvaluechanged', onNotify);
   }
   setStatus('Conectado','on');
-  $('btnFind').disabled = false;
+}
+
+/* ===== Mediciones ===== */
+function storeMeasure(type, t, v, source){
+  const d = load();
+  d.meas[`${type}|${t}`] = { type, t, v, source };
+  save();
+}
+function onUnsolicited(cmd, p){
+  if (cmd === CMD.RESULT && p.length >= 2){
+    const type = p[0], v = type === 2 ? [p[1], p[2]] : [p[1]];
+    if (!MT[type] || !plausible(type, v)) return;            // ceros o valores intermedios
+    const n = new Date();
+    storeMeasure(type, `${keyOf(n)}T${pad(n.getHours())}:${pad(n.getMinutes())}`, v, measuring ? 'app' : 'reloj');
+    if (measuring && measuring.type === type) endMeasure(true);
+    else { renderHealth(); showMsg(`${MT[type].name} recibido del reloj.`); }
+  }
+}
+async function measure(type){
+  if (measuring || busy) return;
+  try {
+    await connect();
+    const ack = await request(CMD.MEASURE, [type], () => true, 3000);
+    if (!ack[0] || ack[0][1] !== 1){ showMsg(`El reloj no aceptó la medición de ${MT[type].name.toLowerCase()}.`, true); return; }
+    measuring = { type, timer: setTimeout(() => endMeasure(false, 'No llegó resultado en 60 segundos. Ajusta el reloj a la muñeca y vuelve a intentar.'), 60000) };
+    renderHealth();
+    showMsg(`Midiendo ${MT[type].name.toLowerCase()}… mantén el brazo quieto.`);
+  } catch(e){ handleError(e); }
+}
+async function endMeasure(ok, why){
+  if (!measuring) return;
+  const type = measuring.type;
+  clearTimeout(measuring.timer); measuring = null;
+  try { if (chWrite) await send(CMD.MEASURE, [0xff]); } catch(e){}
+  renderHealth();
+  if (ok) showMsg(`${MT[type].name} medido.`);
+  else if (why) showMsg(why, true);
 }
 
 /* ===== Sincronización ===== */
 async function sync(){
-  if (busy) return;
+  if (busy || measuring) return;
   busy = true; $('btnSync').disabled = true;
   const d = load();
   try {
     await connect();
     setStatus('Sincronizando…','busy');
-
     const now = new Date();
-    await request(CMD.TIME, [1, now.getFullYear()-2000, now.getMonth()+1, now.getDate(),
-                             now.getHours(), now.getMinutes(), now.getSeconds()]);
+    await request(CMD.TIME, [1, now.getFullYear()-2000, now.getMonth()+1, now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds()]);
 
-    const bat = await request(CMD.BATTERY);
-    if (bat[0]) d.battery = bat[0][0];
+    const bat = await request(CMD.BATTERY); if (bat[0]) d.battery = bat[0][0];
 
-    const fw = await request(CMD.FIRMWARE);
-    if (fw[0] && fw[0].length >= 8) d.model = String.fromCharCode(...fw[0].slice(4,8)).replace(/[^\x20-\x7e]/g,'');
-
-    // Total del día: daysAgo, año, mes, día, pasos(4), distancia(4), calorías(4)
-    const st = await request(CMD.STEPS, [0]);
-    if (st[0] && st[0].length >= 8){
-      const p = st[0], k = `20${pad(p[1])}-${pad(p[2])}-${pad(p[3])}`;
-      d.days[k] = Math.max(d.days[k] || 0, u32(p,4));
+    // Info: banderas de funciones (bytes 0..3), modelo (4..7), hardware (8..9), firmware (10..11)
+    const info = await request(CMD.INFO);
+    if (info[0] && info[0].length >= 12){
+      const p = info[0];
+      d.flags = { b3:p[0], b4:p[1], b5:p[2], b6:p[3] };
+      d.model = String.fromCharCode(...p.slice(4,8)).replace(/[^\x20-\x7e]/g,'');
+      d.hw = `${p[8]}.${p[9]}`; d.fw = `${p[10]}.${p[11]}`;
     }
+    const other = await request(CMD.OTHER_FUNC, [0]);
+    if (other[0] && other[0].length >= 2){ d.flags = d.flags || {}; d.flags.o3 = other[0][0]; d.flags.o4 = other[0][1]; }
 
-    // Bloques de 15 min: daysAgo, total, actual, año, mes, día, hora, min, pasos(2), dist(2), cal(2)
+    const st = await request(CMD.STEPS, [0]);
+    if (st[0] && st[0].length >= 8){ const p = st[0]; const k = `20${pad(p[1])}-${pad(p[2])}-${pad(p[3])}`; d.days[k] = Math.max(d.days[k] || 0, u32(p,4)); }
+
     const act = await request(CMD.ACTIVITY, [0], p => p[1] === 0 || p[2] >= p[1], 4000);
     let nBlocks = 0;
-    for (const p of act){
-      if (p.length < 10 || p[1] === 0) continue;
-      d.blocks[`20${pad(p[3])}-${pad(p[4])}-${pad(p[5])}T${pad(p[6])}:${pad(p[7])}`] = u16(p,8);
-      nBlocks++;
-    }
+    for (const p of act){ if (p.length < 10 || p[1] === 0) continue; d.blocks[dt(p[3],p[4],p[5],p[6],p[7])] = u16(p,8); nBlocks++; }
 
-    // Sueño: daysAgo, total(2), actual(2), año, mes, día, hora, min, tipo (1 despierto, 2 ligero, 3 profundo)
     const sl = await request(CMD.SLEEP, [0], p => u16(p,1) === 0 || u16(p,3) >= u16(p,1), 4000);
-    for (const p of sl){
-      if (p.length < 11 || u16(p,1) === 0) continue;
-      d.sleep[`20${pad(p[5])}-${pad(p[6])}-${pad(p[7])}T${pad(p[8])}:${pad(p[9])}`] = p[10];
-    }
+    for (const p of sl){ if (p.length < 11 || u16(p,1) === 0) continue; d.sleep[dt(p[5],p[6],p[7],p[8],p[9])] = p[10]; }
     fixFutureSleep(d);
-    // Nota: el comando 0x11 (pulso/presión/oxígeno) no se envía; este reloj no lo responde.
+
+    // Total de sueño según el reloj: daysAgo, año, mes, día, minutos(2)
+    const stt = await request(CMD.SLEEP_TOTAL, [0], () => true, 1500);
+    if (stt[0] && stt[0].length >= 6){ const p = stt[0]; d.sleepTotal[`20${pad(p[1])}-${pad(p[2])}-${pad(p[3])}`] = u16(p,4); }
+
+    // Historial de mediciones guardadas en el reloj: tipo, total, índice, año, mes, día, hora, min, ?, valor(es)
+    let nMeas = 0;
+    for (const type of [1,2,4]){
+      const h = await request(CMD.MEAS_HIST, [type], p => p[1] === 0 || p[2] >= p[1], 1500);
+      for (const p of h){
+        if (p.length < 10 || p[1] === 0 || p[0] !== type) continue;
+        const v = type === 2 ? [p[9], p[10]] : [p[9]];
+        if (plausible(type, v)){ storeMeasure(type, dt(p[3],p[4],p[5],p[6],p[7]), v, 'reloj'); nMeas++; }
+      }
+    }
 
     d.lastSync = new Date().toISOString();
     save();
-    selectedDay = todayKey();
-    render();
+    selectedDay = todayKey(); selectedNight = todayKey();
+    renderAll();
     setStatus('Conectado','on');
-    showMsg(`Sincronizado: ${nBlocks} bloque${nBlocks===1?'':'s'} de 15 minutos y batería al ${d.battery ?? '—'} %.`);
-  } catch(e){
-    if (e.name === 'NotFoundError') showMsg('No elegiste ningún reloj. Toca “Conectar y sincronizar” y selecciona eWatch.', true);
-    else showMsg((e.message || String(e)) + ' Si el reloj está conectado a otra app (Gadgetbridge o la oficial), desconéctalo primero.', true);
-    setStatus(device && device.gatt.connected ? 'Conectado' : 'Sin conectar', device && device.gatt.connected ? 'on' : '');
-  } finally {
-    busy = false; $('btnSync').disabled = false;
-  }
+    showMsg(`Sincronizado: ${nBlocks} bloque${nBlocks===1?'':'s'} de pasos${nMeas ? `, ${nMeas} medición${nMeas===1?'':'es'} del reloj` : ''} y batería al ${d.battery ?? '—'} %.`);
+  } catch(e){ handleError(e); }
+  finally { busy = false; $('btnSync').disabled = false; }
 }
-
+function handleError(e){
+  if (e.name === 'NotFoundError') showMsg('No elegiste ningún reloj. Toca “Sincronizar” y selecciona eWatch.', true);
+  else showMsg((e.message || String(e)) + ' Si el reloj está conectado a otra app (Gadgetbridge o la oficial), desconéctalo primero.', true);
+  const on = device && device.gatt.connected;
+  setStatus(on ? 'Conectado' : 'Sin conectar', on ? 'on' : '');
+}
 async function findWatch(){
   try { await connect(); const r = await request(CMD.FIND);
     showMsg(r[0] && r[0][0] === 1 ? 'El reloj debería estar vibrando.' : 'El reloj no confirmó la orden de vibrar.');
-  } catch(e){ showMsg(e.message || String(e), true); }
+  } catch(e){ handleError(e); }
 }
 
-/* ===== Vista ===== */
-let selectedDay = null;
-const todayKey = () => { const n = new Date(); return `${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())}`; };
-function dayTotal(d, k){
-  const fromBlocks = Object.entries(d.blocks).filter(([t]) => t.startsWith(k)).reduce((s,[,v]) => s+v, 0);
-  return Math.max(d.days[k] || 0, fromBlocks);
-}
-function sleepSegments(d, k){
-  // Cada registro marca un estado que dura hasta el siguiente registro (máx. 60 min); el último, 15 min.
-  const recs = Object.entries(d.sleep).map(([t,v]) => [new Date(t), v]).sort((a,b) => a[0]-b[0]);
-  const start = new Date(k+'T00:00'), end = new Date(start.getTime() + 864e5), segs = [];
-  recs.forEach(([t,v], i) => {
-    const next = recs[i+1] ? recs[i+1][0] : new Date(t.getTime() + 15*6e4);
-    const e = new Date(Math.min(next, t.getTime() + 60*6e4));
-    const s0 = Math.max(t, start), e0 = Math.min(e, end);
-    if (e0 > s0) segs.push({ s:(s0-start)/6e4, e:(e0-start)/6e4, type:v });
-  });
-  return segs;
-}
+/* ===== Sueño ===== */
 function fixFutureSleep(d){
-  // El reloj etiqueta el inicio de la noche anterior (p. ej. 22:00) con la fecha nueva.
-  // Un registro con hora futura pertenece en realidad al día anterior.
+  // El reloj etiqueta el inicio de la noche anterior con la fecha nueva: una hora futura pertenece al día anterior.
   const lim = Date.now() + 5*6e4; let changed = false;
   for (const [k,v] of Object.entries(d.sleep)){
     const t = new Date(k);
-    if (t.getTime() > lim){
-      t.setDate(t.getDate()-1); delete d.sleep[k];
-      d.sleep[`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}T${pad(t.getHours())}:${pad(t.getMinutes())}`] = v;
-      changed = true;
-    }
+    if (t.getTime() > lim){ t.setDate(t.getDate()-1); delete d.sleep[k];
+      d.sleep[`${keyOf(t)}T${pad(t.getHours())}:${pad(t.getMinutes())}`] = v; changed = true; }
   }
   if (changed) save();
 }
 function nightSummary(d, k){
-  // Noche que termina el día k: de las 18:00 del día anterior a las 18:00 del día k.
+  // Noche que termina el día k: de 18:00 del día anterior a 18:00 del día k.
   const end = new Date(k+'T18:00'), start = new Date(end.getTime() - 864e5);
-  const recs = Object.entries(d.sleep).map(([t,v]) => [new Date(t), v])
-    .filter(([t]) => t >= start && t < end).sort((a,b) => a[0]-b[0]);
-  // Segmentos: cada registro dura hasta el siguiente. Un tramo despierto de 60 min o más separa sesiones.
-  const segs = recs.map((r,i) => ({ t:r[0], type:r[1],
-    end: recs[i+1] ? recs[i+1][0] : new Date(r[0].getTime() + 15*6e4) }));
+  const recs = Object.entries(d.sleep).map(([t,v]) => [new Date(t), v]).filter(([t]) => t >= start && t < end).sort((a,b) => a[0]-b[0]);
+  const segs = recs.map((r,i) => ({ t:r[0], type:r[1], end: recs[i+1] ? recs[i+1][0] : new Date(r[0].getTime() + 15*6e4) }));
   const sessions = []; let cur = [];
   for (const sg of segs){
     if (sg.type === 1 && (sg.end - sg.t) >= 60*6e4){ if (cur.length) sessions.push(cur); cur = []; }
@@ -358,114 +443,204 @@ function nightSummary(d, k){
     if (!ss.length) continue;
     const sum = {1:0,2:0,3:0};
     ss.forEach(sg => sum[sg.type] += (sg.end - sg.t) / 6e4);
-    if (sum[2] + sum[3] > bestMin){ bestMin = sum[2] + sum[3]; best = { sum, from:ss[0].t, to:ss[ss.length-1].end }; }
+    if (sum[2] + sum[3] > bestMin){ bestMin = sum[2] + sum[3]; best = { sum, from:ss[0].t, to:ss[ss.length-1].end, segs:ss }; }
   }
   return best;
 }
-const fmtMin = m => m < 60 ? `${Math.round(m)} min` : `${Math.floor(m/60)} h ${pad(Math.round(m%60))}`;
-const NS = 'http://www.w3.org/2000/svg';
-function el(tag, attrs, parent){
-  const e = document.createElementNS(NS, tag);
-  for (const k in attrs) e.setAttribute(k, attrs[k]);
-  parent.appendChild(e); return e;
+function daySleepSegs(d, k){
+  const recs = Object.entries(d.sleep).map(([t,v]) => [new Date(t), v]).sort((a,b) => a[0]-b[0]);
+  const start = new Date(k+'T00:00'), end = new Date(start.getTime() + 864e5), segs = [];
+  recs.forEach(([t,v], i) => {
+    const next = recs[i+1] ? recs[i+1][0] : new Date(t.getTime() + 15*6e4);
+    const e = new Date(Math.min(next, t.getTime() + 60*6e4));
+    const s0 = Math.max(t, start), e0 = Math.min(e, end);
+    if (e0 > s0) segs.push({ s:(s0-start)/6e4, e:(e0-start)/6e4, type:v });
+  });
+  return segs;
 }
 
-function render(){
-  const d = load(), k = selectedDay || todayKey(), isToday = k === todayKey();
-  fixFutureSleep(d);
-  const total = dayTotal(d, k);
-  const dt = new Date(k+'T12:00');
-  $('dayLabel').textContent = isToday ? 'Hoy' : dt.toLocaleDateString('es-CO',{weekday:'long', day:'numeric', month:'long'});
-  $('steps').innerHTML = `${total.toLocaleString('es-CO')}<small>pasos</small>`;
-  const pct = Math.min(100, total / d.goal * 100);
-  $('goalBar').style.width = pct + '%';
-  $('goalText').textContent = total >= d.goal
-    ? `Meta de ${d.goal.toLocaleString('es-CO')} cumplida.`
-    : `Faltan ${(d.goal-total).toLocaleString('es-CO')} para la meta de ${d.goal.toLocaleString('es-CO')}.` +
-      (d.lastSync ? ` Última sincronización: ${new Date(d.lastSync).toLocaleTimeString('es-CO',{hour:'numeric',minute:'2-digit'})}.` : '');
-  $('goalInput').value = d.goal;
-  $('devInfo').textContent = d.model ? `Modelo ${d.model}${d.battery != null ? `, batería ${d.battery} %` : ''}.` : 'Aún no se ha leído el reloj.';
-
-  // Día: barras por hora + franja de sueño
-  const svg = $('dayChart'); svg.innerHTML = '';
-  const hours = Array(24).fill(0);
-  for (const [t,v] of Object.entries(d.blocks)) if (t.startsWith(k)) hours[+t.slice(11,13)] += v;
-  const maxH = Math.max(100, ...hours);
-  hours.forEach((v,h) => {
-    const bh = v ? Math.max(2, v / maxH * 78) : 0;
-    el('rect', { x:h*12+2, y:84-bh, width:8, height:bh, rx:1.5, fill:'var(--steps)' }, svg);
-    if (v){ const r = svg.lastChild; const tt = document.createElementNS(NS,'title'); tt.textContent = `${h}:00 — ${v} pasos`; r.appendChild(tt); }
-  });
-  el('line', { x1:0, x2:288, y1:84.5, y2:84.5, stroke:'var(--rule)' }, svg);
-  el('rect', { x:0, y:90, width:288, height:8, rx:2, fill:'var(--bg)' }, svg);
-  const colors = { 1:'var(--awake)', 2:'var(--light)', 3:'var(--deep)' };
-  const segs = sleepSegments(d, k);
-  segs.forEach(s => el('rect', { x:s.s/5, y:90, width:Math.max(.8,(s.e-s.s)/5), height:8, fill:colors[s.type] || 'var(--muted)' }, svg));
-  [0,6,12,18].forEach(h => { const t = el('text', { x:h*12+1, y:114, 'font-size':9, fill:'var(--muted)' }, svg); t.textContent = `${h}h`; });
-  if (!hours.some(Boolean) && !segs.length){
-    const t = el('text', { x:144, y:48, 'text-anchor':'middle', 'font-size':10, fill:'var(--muted)' }, svg);
-    t.textContent = isToday ? 'Sincroniza para ver tu día' : 'Sin datos guardados para este día';
-  }
-
-  // Sueño
-  const n = nightSummary(d, k);
-  const hm = t => t.toLocaleTimeString('es-CO',{hour:'numeric', minute:'2-digit'});
-  $('sTotal').textContent = n ? fmtMin(n.sum[2] + n.sum[3]) : '—';
-  $('sDeep').textContent = n ? fmtMin(n.sum[3]) : '—';
-  $('sAwake').textContent = n ? fmtMin(n.sum[1]) : '—';
-  $('sRange').textContent = n
-    ? `De ${hm(n.from)} a ${hm(n.to)}, con ${fmtMin(n.sum[2])} de sueño ligero.`
-    : 'Sin sueño registrado para la noche anterior a este día.';
-
-  // 14 días
-  const w = $('weekChart'); w.innerHTML = '';
-  const days = []; for (let i=13;i>=0;i--){ const x = new Date(); x.setDate(x.getDate()-i);
-    days.push(`${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}`); }
-  const vals = days.map(x => dayTotal(d, x)), maxW = Math.max(d.goal, ...vals);
-  const gy = 86 - d.goal / maxW * 80;
-  el('line', { x1:0, x2:288, y1:gy, y2:gy, stroke:'var(--muted)', 'stroke-dasharray':'3 3', 'stroke-width':.7 }, w);
-  days.forEach((x,i) => {
-    const v = vals[i], bh = v ? Math.max(2, v / maxW * 80) : 0, sel = x === k;
-    const g = el('g', { style:'cursor:pointer', tabindex:0, role:'button', 'aria-label':`${x}: ${v} pasos` }, w);
-    el('rect', { x:i*20.57, y:0, width:20.57, height:110, fill:'transparent' }, g);
-    el('rect', { x:i*20.57+4, y:86-bh, width:12.5, height:bh, rx:2,
-      fill: sel ? 'var(--steps)' : 'var(--steps-soft)' }, g);
-    const t = el('text', { x:i*20.57+10.3, y:102, 'text-anchor':'middle', 'font-size':8.5,
-      fill: sel ? 'var(--ink)' : 'var(--muted)', 'font-weight': sel ? 700 : 400 }, g);
-    t.textContent = new Date(x+'T12:00').getDate();
-    const pick = () => { selectedDay = x; render(); };
+/* ===== Vista ===== */
+let selectedDay = null, selectedNight = null;
+const fmtMin = m => m < 60 ? `${Math.round(m)} min` : `${Math.floor(m/60)} h ${pad(Math.round(m%60))}`;
+const hm = t => t.toLocaleTimeString('es-CO',{hour:'numeric', minute:'2-digit'});
+const longDate = k => new Date(k+'T12:00').toLocaleDateString('es-CO',{weekday:'long', day:'numeric', month:'long'});
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent, text){
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text != null) e.textContent = text;
+  parent.appendChild(e); return e;
+}
+const SLEEP_COLOR = { 1:'var(--awake)', 2:'var(--light)', 3:'var(--deep)' };
+function dayTotal(d, k){
+  const fromBlocks = Object.entries(d.blocks).filter(([t]) => t.startsWith(k)).reduce((s,[,v]) => s+v, 0);
+  return Math.max(d.days[k] || 0, fromBlocks);
+}
+function lastDays(n){ const out = []; for (let i=n-1;i>=0;i--){ const x = new Date(); x.setDate(x.getDate()-i); out.push(keyOf(x)); } return out; }
+function barChart(svg, keys, vals, sel, max, refLine, color, softColor, label, onPick){
+  svg.innerHTML = '';
+  const w = 288 / keys.length;
+  if (refLine){ const gy = 86 - refLine / max * 80;
+    el('line', { x1:0, x2:288, y1:gy, y2:gy, stroke:'var(--muted)', 'stroke-dasharray':'3 3', 'stroke-width':.7 }, svg); }
+  keys.forEach((x,i) => {
+    const v = vals[i], bh = v ? Math.max(2, v / max * 80) : 0, isSel = x === sel;
+    const g = el('g', { style:'cursor:pointer', tabindex:0, role:'button', 'aria-label':label(x, v) }, svg);
+    el('rect', { x:i*w, y:0, width:w, height:110, fill:'transparent' }, g);
+    el('rect', { x:i*w + w*.2, y:86-bh, width:w*.6, height:bh, rx:2, fill: isSel ? color : softColor }, g);
+    el('text', { x:i*w + w/2, y:102, 'text-anchor':'middle', 'font-size':8.5, fill: isSel ? 'var(--ink)' : 'var(--muted)', 'font-weight': isSel ? 700 : 400 }, g, new Date(x+'T12:00').getDate());
+    const pick = () => onPick(x);
     g.addEventListener('click', pick);
     g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
   });
 }
 
-function exportCsv(){
-  const d = load(), rows = [['tipo','fecha_hora','valor']];
-  Object.entries(d.blocks).sort().forEach(([t,v]) => rows.push(['pasos_15min', t, v]));
-  Object.entries(d.days).sort().forEach(([t,v]) => rows.push(['pasos_dia', t, v]));
-  const names = {1:'despierto',2:'ligero',3:'profundo'};
-  Object.entries(d.sleep).sort().forEach(([t,v]) => rows.push(['sueno', t, names[v] || v]));
-  const blob = new Blob([rows.map(r => r.join(',')).join('\n')], { type:'text/csv' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = `reloj_${todayKey()}.csv`; a.click();
-  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+function renderToday(){
+  const d = load(), k = selectedDay || todayKey(), isToday = k === todayKey(), total = dayTotal(d, k);
+  $('dayLabel').textContent = isToday ? 'Hoy' : longDate(k);
+  $('steps').innerHTML = `${total.toLocaleString('es-CO')}<small>pasos</small>`;
+  $('goalBar').style.width = Math.min(100, total / d.goal * 100) + '%';
+  $('goalText').textContent = (total >= d.goal ? `Meta de ${d.goal.toLocaleString('es-CO')} cumplida.`
+    : `Faltan ${(d.goal-total).toLocaleString('es-CO')} para la meta de ${d.goal.toLocaleString('es-CO')}.`) +
+    (d.lastSync && isToday ? ` Sincronizado a las ${hm(new Date(d.lastSync))}.`.replace(/\.\.$/,'.') : '');
+
+  const svg = $('dayChart'); svg.innerHTML = '';
+  const hours = Array(24).fill(0);
+  for (const [t,v] of Object.entries(d.blocks)) if (t.startsWith(k)) hours[+t.slice(11,13)] += v;
+  const maxH = Math.max(100, ...hours);
+  hours.forEach((v,h) => { if (!v) return; const bh = Math.max(2, v / maxH * 78);
+    el('title', {}, el('rect', { x:h*12+2, y:84-bh, width:8, height:bh, rx:1.5, fill:'var(--steps)' }, svg), `${h}:00 — ${v} pasos`); });
+  el('line', { x1:0, x2:288, y1:84.5, y2:84.5, stroke:'var(--rule)' }, svg);
+  el('rect', { x:0, y:90, width:288, height:8, rx:2, fill:'var(--bg)' }, svg);
+  const segs = daySleepSegs(d, k);
+  segs.forEach(s => el('rect', { x:s.s/5, y:90, width:Math.max(.8,(s.e-s.s)/5), height:8, fill:SLEEP_COLOR[s.type] || 'var(--muted)' }, svg));
+  [0,6,12,18].forEach(h => el('text', { x:h*12+1, y:114, 'font-size':9, fill:'var(--muted)' }, svg, `${h}h`));
+  if (!hours.some(Boolean) && !segs.length)
+    el('text', { x:144, y:48, 'text-anchor':'middle', 'font-size':10, fill:'var(--muted)' }, svg, isToday ? 'Sincroniza para ver tu día' : 'Sin datos guardados para este día');
+
+  const days = lastDays(14), vals = days.map(x => dayTotal(d, x));
+  barChart($('weekChart'), days, vals, k, Math.max(d.goal, ...vals), d.goal, 'var(--steps)', 'var(--steps-soft)',
+    (x,v) => `${x}: ${v} pasos`, x => { selectedDay = x; renderToday(); });
 }
 
+function fmtVal(m){ return m.type === 2 ? `${m.v[0]}/${m.v[1]}` : `${m.v[0]}`; }
+function renderHealth(){
+  const d = load(), all = Object.values(d.meas).sort((a,b) => a.t < b.t ? 1 : -1);
+  for (const t of [1,2,4]){
+    const last = all.find(m => m.type === t), card = document.querySelector(`.vital[data-t="${t}"]`);
+    const isM = measuring && measuring.type === t;
+    card.classList.toggle('measuring', !!isM);
+    $('v'+t).innerHTML = `${last ? fmtVal(last) : '—'}<small>${MT[t].unit}</small>`;
+    $('w'+t).textContent = isM ? 'Midiendo…' : last ? `${last.t.startsWith(todayKey()) ? 'Hoy' : longDate(last.t.slice(0,10))}, ${hm(new Date(last.t))}` : 'Sin mediciones';
+    const b = card.querySelector('button');
+    b.textContent = isM ? 'Detener' : 'Medir';
+    b.disabled = !!measuring && !isM;
+  }
+  const hr = all.filter(m => m.type === 1).slice(0,20).reverse(), svg = $('hrChart'); svg.innerHTML = '';
+  if (hr.length < 2) el('text', { x:144, y:48, 'text-anchor':'middle', 'font-size':10, fill:'var(--muted)' }, svg, 'Haz al menos dos mediciones de pulso para ver la tendencia');
+  else {
+    const vs = hr.map(m => m.v[0]), lo = Math.min(...vs) - 5, hi = Math.max(...vs) + 5;
+    const pts = vs.map((v,i) => [10 + i * 268 / (vs.length-1), 74 - (v-lo)/(hi-lo) * 60]);
+    el('polyline', { points: pts.map(p => p.join(',')).join(' '), fill:'none', stroke:'var(--heart)', 'stroke-width':2, 'stroke-linejoin':'round' }, svg);
+    pts.forEach((p,i) => el('title', {}, el('circle', { cx:p[0], cy:p[1], r:2.6, fill:'var(--heart)' }, svg), `${vs[i]} lpm`));
+    el('text', { x:2, y:88, 'font-size':9, fill:'var(--muted)' }, svg, `mín. ${Math.min(...vs)}`);
+    el('text', { x:286, y:88, 'font-size':9, fill:'var(--muted)', 'text-anchor':'end' }, svg, `máx. ${Math.max(...vs)} lpm`);
+  }
+  $('measList').innerHTML = all.length ? '' : '<li><span>Aún no hay mediciones.</span></li>';
+  all.slice(0,30).forEach(m => {
+    const li = document.createElement('li');
+    li.innerHTML = `<b>${MT[m.type].name}: ${fmtVal(m)} ${MT[m.type].unit}</b><span>${m.t.slice(8,10)}/${m.t.slice(5,7)} ${hm(new Date(m.t))}${m.source === 'reloj' ? ' (en el reloj)' : ''}</span>`;
+    $('measList').appendChild(li);
+  });
+}
+
+function renderSleep(){
+  const d = load(), k = selectedNight || todayKey(), n = nightSummary(d, k);
+  $('nightLabel').textContent = k === todayKey() ? 'Anoche' : `Noche que terminó el ${longDate(k)}`;
+  $('nightTotal').textContent = n ? fmtMin(n.sum[2] + n.sum[3]) : '—';
+  $('nightRange').textContent = n ? `Dormiste de ${hm(n.from)} a ${hm(n.to)}.`.replace(/\.\.$/,'.') : 'Sin sueño registrado para esta noche. Sincroniza al despertar.';
+  $('sDeep').textContent = n ? fmtMin(n.sum[3]) : '—';
+  $('sLight').textContent = n ? fmtMin(n.sum[2]) : '—';
+  $('sAwake').textContent = n ? fmtMin(n.sum[1]) : '—';
+
+  const svg = $('hypno'); svg.innerHTML = '';
+  const rows = { 1:[4,'Despierto'], 2:[26,'Ligero'], 3:[48,'Profundo'] };
+  for (const t of [1,2,3]){ el('rect', { x:54, y:rows[t][0], width:234, height:18, rx:2, fill:'var(--bg)' }, svg);
+    el('text', { x:0, y:rows[t][0]+13, 'font-size':9.5, fill:'var(--muted)' }, svg, rows[t][1]); }
+  if (n){
+    const span = n.to - n.from;
+    n.segs.forEach(s => el('rect', { x:54 + (s.t-n.from)/span*234, y:rows[s.type][0], width:Math.max(.8,(s.end-s.t)/span*234), height:18, fill:SLEEP_COLOR[s.type] }, svg));
+    el('text', { x:54, y:82, 'font-size':9, fill:'var(--muted)' }, svg, hm(n.from));
+    el('text', { x:288, y:82, 'font-size':9, fill:'var(--muted)', 'text-anchor':'end' }, svg, hm(n.to));
+  }
+  const nights = lastDays(7), vals = nights.map(x => { const s = nightSummary(d, x); return s ? Math.round(s.sum[2] + s.sum[3]) : 0; });
+  barChart($('nightsChart'), nights, vals, k, Math.max(480, ...vals), 480, 'var(--deep)', 'var(--light)',
+    (x,v) => `Noche del ${x}: ${fmtMin(v)}`, x => { selectedNight = x; renderSleep(); });
+  const wt = d.sleepTotal[k];
+  $('watchSleep').textContent = wt ? `El propio reloj calcula ${fmtMin(wt)} de sueño para esta fecha. La línea punteada marca 8 horas.` : 'La línea punteada marca 8 horas.';
+}
+
+const FEATURES = [
+  ['Pasos', f => f.b3 & 2], ['Pulso', f => f.b3 & 4], ['Presión arterial', f => f.b3 & 8], ['Oxígeno', f => !(f.b6 & 1)],
+  ['Levantar para encender', f => f.b3 & 16], ['Sedentarismo', f => f.b3 & 32], ['Agua', f => f.b3 & 64], ['Cámara remota', f => f.b3 & 128],
+  ['Antipérdida', f => f.b4 & 1], ['Buscar teléfono', f => f.b4 & 2], ['Alarmas', f => !(f.b4 & 64)], ['Carátulas', f => f.b4 & 128],
+  ['Clima', f => !(f.b6 & 2)], ['Fondo de pantalla', f => !(f.b6 & 8)], ['Contactos', f => !(f.b6 & 32)],
+  ['Pulso automático', f => f.o4 & 16], ['ECG', f => f.b4 & 24], ['Temperatura', f => f.b5 & 4], ['Glucosa', f => f.b5 & 2]
+];
+function renderMore(){
+  const d = load();
+  $('goalInput').value = d.goal;
+  $('devInfo').textContent = d.model ? `Modelo ${d.model}, hardware ${d.hw ?? '—'}, firmware ${d.fw ?? '—'}, batería ${d.battery ?? '—'} %.` : 'Aún no se ha leído el reloj. Sincroniza para ver sus funciones.';
+  $('featYes').innerHTML = ''; $('featNo').innerHTML = '';
+  if (d.flags) for (const [name, test] of FEATURES){
+    const s = document.createElement('span'); s.textContent = name;
+    (test(d.flags) ? $('featYes') : $('featNo')).appendChild(s);
+  }
+}
+function renderAll(){ renderToday(); renderHealth(); renderSleep(); renderMore(); }
+
+/* ===== Navegación y acciones ===== */
+function showTab(id){
+  if (!document.getElementById(id) || !document.getElementById(id).classList.contains('tab')) id = 'hoy';
+  document.querySelectorAll('section.tab').forEach(s => s.classList.toggle('active', s.id === id));
+  document.querySelectorAll('nav button').forEach(b => { if (b.dataset.tab === id) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => { location.hash = b.dataset.tab; }));
+window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+document.querySelectorAll('[data-measure]').forEach(b => b.addEventListener('click', () => {
+  const t = +b.dataset.measure;
+  if (measuring && measuring.type === t) endMeasure(false, 'Medición detenida.');
+  else measure(t);
+}));
+
+function exportCsv(){
+  const d = load(), rows = [['tipo','fecha_hora','valor','valor2']];
+  Object.entries(d.blocks).sort().forEach(([t,v]) => rows.push(['pasos_15min', t, v, '']));
+  Object.entries(d.days).sort().forEach(([t,v]) => rows.push(['pasos_dia', t, v, '']));
+  const names = {1:'despierto',2:'ligero',3:'profundo'};
+  Object.entries(d.sleep).sort().forEach(([t,v]) => rows.push(['sueno', t, names[v] || v, '']));
+  Object.values(d.meas).sort((a,b) => a.t < b.t ? -1 : 1).forEach(m => rows.push([MT[m.type].key, m.t, m.v[0], m.v[1] ?? '']));
+  const blob = new Blob([rows.map(r => r.join(',')).join('\n')], { type:'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `reloj_${todayKey()}.csv`; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
 $('btnSync').addEventListener('click', sync);
 $('btnFind').addEventListener('click', findWatch);
 $('btnCsv').addEventListener('click', exportCsv);
 $('btnGoal').addEventListener('click', () => {
   const v = parseInt($('goalInput').value, 10);
-  if (v >= 500){ load().goal = v; save(); render(); showMsg(`Meta guardada: ${v.toLocaleString('es-CO')} pasos.`); }
+  if (v >= 500){ load().goal = v; save(); renderAll(); showMsg(`Meta guardada: ${v.toLocaleString('es-CO')} pasos.`); }
 });
 $('btnClear').addEventListener('click', () => {
   if (confirm('¿Borrar todo el historial guardado en este navegador?')){
-    const g = load().goal; mem = { blocks:{}, days:{}, sleep:{}, goal:g, lastSync:null, model:'' }; save(); render();
-    showMsg('Historial borrado.');
+    const g = load().goal; mem = null; try { localStorage.removeItem(KEY); } catch(e){}
+    load().goal = g; save(); renderAll(); showMsg('Historial borrado.');
   }
 });
 if (!navigator.bluetooth) showMsg('Este navegador no tiene Web Bluetooth. Abre la página en Chrome para Android, servida por HTTPS.', true);
-render();
+fixFutureSleep(load());
+showTab(location.hash.slice(1) || 'hoy');
+renderAll();
 </script>
 </body>
 </html>

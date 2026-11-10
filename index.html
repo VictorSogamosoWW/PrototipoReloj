@@ -108,12 +108,13 @@ pre{font-size:.75rem;line-height:1.5;max-height:260px;overflow:auto;white-space:
   <h2>Últimos 14 días</h2>
   <div class="week"><svg id="weekChart" viewBox="0 0 288 110" role="img" aria-label="Pasos de los últimos 14 días. Toca un día para verlo."></svg></div>
 
-  <h2>Sueño del día</h2>
+  <h2>Sueño de la noche</h2>
   <div class="sleep-sum">
+    <div><b id="sTotal">—</b><span>Dormido</span></div>
     <div><b id="sDeep">—</b><span>Profundo</span></div>
-    <div><b id="sLight">—</b><span>Ligero</span></div>
     <div><b id="sAwake">—</b><span>Despierto</span></div>
   </div>
+  <div class="meta" id="sRange" style="margin-top:8px"></div>
 
   <details>
     <summary>Ajustes y registro técnico</summary>
@@ -279,6 +280,7 @@ async function sync(){
       if (p.length < 11 || u16(p,1) === 0) continue;
       d.sleep[`20${pad(p[5])}-${pad(p[6])}-${pad(p[7])}T${pad(p[8])}:${pad(p[9])}`] = p[10];
     }
+    fixFutureSleep(d);
     // Nota: el comando 0x11 (pulso/presión/oxígeno) no se envía; este reloj no lo responde.
 
     d.lastSync = new Date().toISOString();
@@ -321,6 +323,45 @@ function sleepSegments(d, k){
   });
   return segs;
 }
+function fixFutureSleep(d){
+  // El reloj etiqueta el inicio de la noche anterior (p. ej. 22:00) con la fecha nueva.
+  // Un registro con hora futura pertenece en realidad al día anterior.
+  const lim = Date.now() + 5*6e4; let changed = false;
+  for (const [k,v] of Object.entries(d.sleep)){
+    const t = new Date(k);
+    if (t.getTime() > lim){
+      t.setDate(t.getDate()-1); delete d.sleep[k];
+      d.sleep[`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}T${pad(t.getHours())}:${pad(t.getMinutes())}`] = v;
+      changed = true;
+    }
+  }
+  if (changed) save();
+}
+function nightSummary(d, k){
+  // Noche que termina el día k: de las 18:00 del día anterior a las 18:00 del día k.
+  const end = new Date(k+'T18:00'), start = new Date(end.getTime() - 864e5);
+  const recs = Object.entries(d.sleep).map(([t,v]) => [new Date(t), v])
+    .filter(([t]) => t >= start && t < end).sort((a,b) => a[0]-b[0]);
+  // Segmentos: cada registro dura hasta el siguiente. Un tramo despierto de 60 min o más separa sesiones.
+  const segs = recs.map((r,i) => ({ t:r[0], type:r[1],
+    end: recs[i+1] ? recs[i+1][0] : new Date(r[0].getTime() + 15*6e4) }));
+  const sessions = []; let cur = [];
+  for (const sg of segs){
+    if (sg.type === 1 && (sg.end - sg.t) >= 60*6e4){ if (cur.length) sessions.push(cur); cur = []; }
+    else cur.push(sg);
+  }
+  if (cur.length) sessions.push(cur);
+  let best = null, bestMin = 0;
+  for (let ss of sessions){
+    while (ss.length && ss[0].type === 1) ss = ss.slice(1);
+    while (ss.length && ss[ss.length-1].type === 1) ss = ss.slice(0,-1);
+    if (!ss.length) continue;
+    const sum = {1:0,2:0,3:0};
+    ss.forEach(sg => sum[sg.type] += (sg.end - sg.t) / 6e4);
+    if (sum[2] + sum[3] > bestMin){ bestMin = sum[2] + sum[3]; best = { sum, from:ss[0].t, to:ss[ss.length-1].end }; }
+  }
+  return best;
+}
 const fmtMin = m => m < 60 ? `${Math.round(m)} min` : `${Math.floor(m/60)} h ${pad(Math.round(m%60))}`;
 const NS = 'http://www.w3.org/2000/svg';
 function el(tag, attrs, parent){
@@ -331,6 +372,7 @@ function el(tag, attrs, parent){
 
 function render(){
   const d = load(), k = selectedDay || todayKey(), isToday = k === todayKey();
+  fixFutureSleep(d);
   const total = dayTotal(d, k);
   const dt = new Date(k+'T12:00');
   $('dayLabel').textContent = isToday ? 'Hoy' : dt.toLocaleDateString('es-CO',{weekday:'long', day:'numeric', month:'long'});
@@ -366,10 +408,14 @@ function render(){
   }
 
   // Sueño
-  const sum = {1:0,2:0,3:0}; segs.forEach(s => sum[s.type] = (sum[s.type]||0) + (s.e - s.s));
-  $('sDeep').textContent = sum[3] ? fmtMin(sum[3]) : '—';
-  $('sLight').textContent = sum[2] ? fmtMin(sum[2]) : '—';
-  $('sAwake').textContent = sum[1] ? fmtMin(sum[1]) : '—';
+  const n = nightSummary(d, k);
+  const hm = t => t.toLocaleTimeString('es-CO',{hour:'numeric', minute:'2-digit'});
+  $('sTotal').textContent = n ? fmtMin(n.sum[2] + n.sum[3]) : '—';
+  $('sDeep').textContent = n ? fmtMin(n.sum[3]) : '—';
+  $('sAwake').textContent = n ? fmtMin(n.sum[1]) : '—';
+  $('sRange').textContent = n
+    ? `De ${hm(n.from)} a ${hm(n.to)}, con ${fmtMin(n.sum[2])} de sueño ligero.`
+    : 'Sin sueño registrado para la noche anterior a este día.';
 
   // 14 días
   const w = $('weekChart'); w.innerHTML = '';

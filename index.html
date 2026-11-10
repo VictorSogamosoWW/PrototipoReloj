@@ -247,6 +247,10 @@ function log(dir, bytes){
   const el = $('log');
   el.textContent = `${t} ${dir} ${hex(bytes)}\n` + el.textContent.split('\n').slice(0,300).join('\n');
 }
+function logText(txt){
+  const t = new Date().toLocaleTimeString('es-CO',{hour12:false});
+  $('log').textContent = `${t} -- ${txt}\n` + $('log').textContent;
+}
 function setStatus(text, state){ $('status').textContent = text; $('dot').className = 'dot' + (state ? ' ' + state : ''); }
 let msgTimer;
 function showMsg(text, isErr){
@@ -327,7 +331,12 @@ async function measure(type){
   try {
     await connect();
     const ack = await request(CMD.MEASURE, [type], () => true, 3000);
-    if (!ack[0] || ack[0][1] !== 1){ showMsg(`El reloj no aceptó la medición de ${MT[type].name.toLowerCase()}.`, true); return; }
+    // Respuesta esperada: tipo, estado (1 = iniciada). Se registra lo que llegue para diagnosticar.
+    if (ack[0] && ack[0][1] !== 1){
+      showMsg(`El reloj rechazó la medición de ${MT[type].name.toLowerCase()} (respuesta ${hex(ack[0])}). Revisa el registro técnico.`, true);
+      return;
+    }
+    if (!ack[0]) logText('Sin confirmación de 0x0F; se espera el resultado de todos modos.');
     measuring = { type, timer: setTimeout(() => endMeasure(false, 'No llegó resultado en 60 segundos. Ajusta el reloj a la muñeca y vuelve a intentar.'), 60000) };
     renderHealth();
     showMsg(`Midiendo ${MT[type].name.toLowerCase()}… mantén el brazo quieto.`);
